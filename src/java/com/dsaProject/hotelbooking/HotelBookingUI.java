@@ -397,6 +397,32 @@ public class HotelBookingUI extends JFrame {
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         inputPanel.add(addButton, gbc);
 
+        // Process Next Button
+        JButton processNextButton = new JButton("Process Next");
+        gbc.gridx = 2; gbc.gridy = 0; gbc.gridheight = 4;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        inputPanel.add(processNextButton, gbc);
+        
+        // Add action listener for Process Next button
+        processNextButton.addActionListener(e -> {
+            ServiceQueue queue = serviceType.equals("Spa") ? spaQueue : restaurantQueue;
+            DefaultTableModel model = serviceType.equals("Spa") ? spaTableModel : restaurantTableModel;
+            
+            ServiceBooking nextBooking = queue.processNext();
+            if (nextBooking != null) {
+                nextBooking.setProcessed(true);
+                JOptionPane.showMessageDialog(panel, 
+                    "Processed booking for " + nextBooking.getCustomerName() + 
+                    " (Room " + nextBooking.getRoomNumber() + ")", 
+                    "Booking Processed", JOptionPane.INFORMATION_MESSAGE);
+                updateServiceTable(model, queue);
+            } else {
+                JOptionPane.showMessageDialog(panel, 
+                    "No bookings in the " + serviceType + " queue.", 
+                    "Queue Empty", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
         // Add input panel to the main panel
         panel.add(inputPanel, BorderLayout.NORTH);
 
